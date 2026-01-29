@@ -1,0 +1,13 @@
+{
+  "name": "canpok1-plugins",
+  "owner": {
+    "name": "canpok1"
+  },
+  "plugins": [
+    {
+      "name": "github",
+      "source": "./plugins/github",
+      "description": "GitHub 連携プラグイン"
+    }
+  ]
+}
