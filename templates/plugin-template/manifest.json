@@ -1,0 +1,34 @@
+{
+  "name": "my-plugin",
+  "version": "0.1.0",
+  "description": "A short description of what this plugin does",
+  "author": {
+    "name": "Your Name",
+    "url": "https://github.com/your-username"
+  },
+  "license": "MIT",
+  "type": "slash-command",
+  "entry": {
+    "commands": [
+      {
+        "name": "my-command",
+        "description": "Description of the command",
+        "args": [
+          {
+            "name": "arg1",
+            "description": "First argument",
+            "required": false
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "runtime": [],
+    "plugins": []
+  },
+  "setup": {
+    "install": "echo 'No install step required'"
+  },
+  "keywords": ["example"]
+}

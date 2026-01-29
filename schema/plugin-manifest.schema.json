@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Claude Code Plugin Manifest",
+  "description": "Schema for Claude Code plugin manifest files",
+  "type": "object",
+  "required": ["name", "version", "description", "author", "type"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique identifier for the plugin (kebab-case)",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the plugin",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of what the plugin does",
+      "maxLength": 200
+    },
+    "author": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["slash-command", "mcp-server", "hook", "composite"],
+      "description": "Type of Claude Code plugin"
+    },
+    "entry": {
+      "type": "object",
+      "description": "Entry points for the plugin",
+      "properties": {
+        "commands": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "description"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Slash command name (without leading /)"
+              },
+              "description": {
+                "type": "string"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["name"],
+                  "properties": {
+                    "name": { "type": "string" },
+                    "description": { "type": "string" },
+                    "required": { "type": "boolean", "default": false }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "hooks": {
+          "type": "object",
+          "description": "Hook definitions keyed by event name",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["command"],
+              "properties": {
+                "command": { "type": "string" },
+                "timeout": { "type": "integer", "default": 60000 }
+              }
+            }
+          }
+        },
+        "mcpServers": {
+          "type": "object",
+          "description": "MCP server configurations",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["command"],
+            "properties": {
+              "command": { "type": "string" },
+              "args": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "env": {
+                "type": "object",
+                "additionalProperties": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "description": "External dependencies required by the plugin",
+      "properties": {
+        "runtime": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Required runtime tools (e.g., node, python, gh)"
+        },
+        "plugins": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Other plugins this plugin depends on"
+        }
+      }
+    },
+    "setup": {
+      "type": "object",
+      "description": "Setup configuration",
+      "properties": {
+        "install": {
+          "type": "string",
+          "description": "Shell command to run during installation"
+        },
+        "configure": {
+          "type": "string",
+          "description": "Shell command to run for initial configuration"
+        }
+      }
+    },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Keywords for discoverability"
+    },
+    "repository": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL of the plugin source repository"
+    }
+  }
+}
