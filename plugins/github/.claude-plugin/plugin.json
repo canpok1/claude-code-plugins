@@ -1,5 +1,11 @@
 {
   "name": "github",
   "description": "GitHub 連携プラグイン",
-  "version": "0.0.0"
+  "version": "0.1.0",
+  "skills": [
+    {
+      "name": "github",
+      "path": "../SKILL.md"
+    }
+  ]
 }
