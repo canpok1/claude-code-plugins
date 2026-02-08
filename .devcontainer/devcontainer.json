@@ -13,7 +13,9 @@
 	"remoteUser": "vscode",
 	"mounts": [
 		"source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
-	]
+	],
+	"postCreateCommand": ".devcontainer/post-create.sh",
+	"waitFor": "postCreateCommand"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
