@@ -1,0 +1,8 @@
+{
+  "name": "my-workflow",
+  "description": "ワークフロー管理プラグイン",
+  "version": "1.0.0",
+  "author": {
+    "name": "canpok1"
+  }
+}
