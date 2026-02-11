@@ -18,7 +18,7 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(gh:*)
     - 些細な修正（誤字脱字）: ユーザー確認の上で直接修正
     - それ以外: GitHub Issue作成（作成前に重複チェック）
         1. 作成予定タイトルで類似Issueを検索する
-            - コマンド: `gh issue list --state open --search "{検索キーワード}"`
+            - コマンド: `gh issue list --state all --search "{検索キーワード}"`
         2. 類似Issueがある場合: 作成をスキップし、既存IssueのタイトルとURLを表示
         3. 類似Issueがない場合: Issueを作成する
             - コマンド: `gh issue create --title "{タイトル}" --body "{本文}"`
