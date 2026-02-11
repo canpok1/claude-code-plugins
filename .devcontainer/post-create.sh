@@ -5,7 +5,7 @@ WORKSPACE_DIR=$(realpath "$SCRIPT_DIR/..")
 PLUGINS_DIR="$WORKSPACE_DIR/plugins"
 
 # setup claude plugin
-CLAUDE_COMMAND="claude --plugin-dir ${PLUGINS_DIR}/base-tools --plugin-dir ${PLUGINS_DIR}/my-workflow"
+CLAUDE_COMMAND="claude --plugin-dir ${PLUGINS_DIR}/base-tools"
 echo "alias claude='${CLAUDE_COMMAND}'" >> ~/.bashrc
 echo "alias claude='${CLAUDE_COMMAND}'" >> ~/.zshrc
 
