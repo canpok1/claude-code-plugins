@@ -26,7 +26,8 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
     - PRが存在しない場合はユーザーに報告し、作業を中断する。
 2. PRブランチがベースブランチより遅れていないか確認する。
     - コマンド: `gh pr view {PR番号} --json mergeStateStatus --jq '.mergeStateStatus'`
-    - `BEHIND` の場合、ベースブランチをマージする。
+    - `BEHIND` の場合、PRブランチへ checkout し、作業ツリーがクリーンであることを確認してからベースブランチをマージする。
+        - 事前確認: `gh pr checkout {PR番号}` でPRブランチへ移動し、`git status --porcelain` が空であることを確認する。
         - コマンド: `gh pr view {PR番号} --json baseRefName --jq '.baseRefName'` でベースブランチ名を取得し、`git fetch origin {ベースブランチ} && git merge origin/{ベースブランチ}` でマージする。
 3. CIの終了を待機する。
     - コマンド: `gh pr checks {PR番号} --watch`
@@ -36,7 +37,8 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
     - 一時的な問題（インフラ障害、flaky test等）の場合は `gh run rerun {run-id}` で再実行し、手順3に戻る。同一ワークフローの再実行は最大2回まで。
     - コード修正が必要な場合は、対応方針を決めて手順7で修正する。
 5. レビューコメントを把握し、対応方針を決める。
-    - コマンド: `gh api graphql -f query='query { repository(owner:"{OWNER}", name:"{REPO}") { pullRequest(number:{PR番号}) { reviewThreads(first:100) { nodes { id isResolved isOutdated comments(first:100) { nodes { author { login } body } } } } } } }'`
+    - コマンド: `gh api graphql -f query='query($owner:String!, $repo:String!, $number:Int!, $after:String) { repository(owner:$owner, name:$repo) { pullRequest(number:$number) { reviewThreads(first:100, after:$after) { pageInfo { hasNextPage endCursor } nodes { id isResolved isOutdated comments(first:100) { nodes { author { login } body } } } } } } }' -F owner='{OWNER}' -F repo='{REPO}' -F number={PR番号}`
+    - `hasNextPage` が true の間は `-F after='{endCursor}'` を渡して繰り返し、全スレッドを取得する。
     - 改修提案かつ対応が必要: コード修正と返信
     - 改修提案かつ対応が不要: 理由を添えて返信
     - 対応内容が承認された: Resolve
@@ -47,7 +49,7 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
 7. 手順4と5で決めた方針に従って対応を行う。
     - CI失敗への対応とレビューコメントへのコード修正をまとめて行い、コミット・プッシュする。
     - 各レビューコメントスレッドへ返信を行う。
-        - コマンド: `gh api graphql -f query='mutation { addPullRequestReviewThreadReply(input: {pullRequestReviewThreadId: "{スレッドID}", body: "{返信内容}"}) { comment { id body } } }'`
+        - コマンド: `gh api graphql -f query='mutation($threadId:ID!, $body:String!) { addPullRequestReviewThreadReply(input: {pullRequestReviewThreadId: $threadId, body: $body}) { comment { id body } } }' -F threadId='{スレッドID}' -F body='{返信内容}'`
 8. 完了条件を満たしているか確認する。
     - CIが未完了の場合は `gh pr checks {PR番号} --watch` を使用してCIの完了を待機してから手順2に戻る。
     - その他の条件を満たしていない場合は未完了の条件をユーザーに報告し、30秒待機してから手順2に戻る。
