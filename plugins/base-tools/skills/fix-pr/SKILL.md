@@ -115,6 +115,7 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
 10. PRのマージを行う。
     - リポジトリで許可されているマージ方式を確認する。
         - コマンド: `gh api repos/{OWNER}/{REPO} --jq '{squash: .allow_squash_merge, merge: .allow_merge_commit, rebase: .allow_rebase_merge}'`
+        - API呼び出しに失敗した場合（権限不足、ネットワークエラー等）: エラー内容をユーザーに報告し、作業を中断する。
     - 以下の優先順位でマージ方式を選択し、対応するフラグを使用する：
         1. squash merge が許可されている場合: `--squash`
         2. merge commit が許可されている場合: `--merge`
