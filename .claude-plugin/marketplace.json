@@ -5,9 +5,9 @@
   },
   "plugins": [
     {
-      "name": "github",
-      "source": "./plugins/github",
-      "description": "GitHub 連携プラグイン"
+      "name": "base-tools",
+      "source": "./plugins/base-tools",
+      "description": "基本ツールプラグイン"
     }
   ]
 }
