@@ -1,7 +1,7 @@
 ---
 name: create-pr
 description: 作業ブランチの修正内容を把握し、プルリクエストのタイトルと本文を作成してPRを作成します。コード修正完了後にPRを作成する場合や、`/create-pr` コマンドが実行された場合に使用してください。
-allowed-tools: Read, Grep, Glob, Bash(gh *)
+allowed-tools: Read, Grep, Glob, Bash(gh:*)
 ---
 
 ## 手順
