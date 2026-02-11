@@ -33,7 +33,7 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(slee
         - `DIRTY`: コンフリクトが存在する。PRブランチへ checkout しベースブランチをマージしてコンフリクト解消を試みる。解消が困難な場合はコンフリクト箇所をユーザーに報告し、判断を仰ぐ。
         - `BLOCKED`: 必須チェックまたは必須レビューが未完了。
             - `gh pr view {PR番号} --json reviewDecision --jq '.reviewDecision'` で確認する。
-            - `REVIEW_REQUIRED` の場合: レビュー承認が必要であることをユーザーに報告し、承認を待つか判断を仰ぐ。
+            - `REVIEW_REQUIRED` または `CHANGES_REQUESTED` の場合: レビュー承認が必要、または変更が要求されていることをユーザーに報告し、対応を待つか判断を仰ぐ。
             - それ以外の場合: 手順3へ進む。
         - `CLEAN`: マージ可能な状態。手順3へ進む。
         - `UNSTABLE`: 必須でないチェックが失敗しているがマージは可能。手順3へ進む。
@@ -112,7 +112,7 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(slee
         - `DIRTY`: コンフリクト解消を試みる。解消できた場合はコミット・プッシュして手順3に戻る（手順7の回数制限の対象）。解消が困難な場合はユーザーに報告し、判断を仰ぐ。
         - `BLOCKED`: 必須チェックまたは必須レビューが未完了。
             - `gh pr view {PR番号} --json reviewDecision --jq '.reviewDecision'` で確認する。
-            - `REVIEW_REQUIRED` の場合: レビュー承認が必要であることをユーザーに報告し、承認を待つか判断を仰ぐ。
+            - `REVIEW_REQUIRED` または `CHANGES_REQUESTED` の場合: レビュー承認が必要、または変更が要求されていることをユーザーに報告し、対応を待つか判断を仰ぐ。
             - それ以外の場合: 手順3に戻りCIの完了を待機する（手順7の回数制限の対象）。
         - `DRAFT`: ドラフトPRである旨をユーザーに報告し、続行するか判断を仰ぐ。
         - `UNKNOWN` または `null`: 10秒待機してから再取得する（最大3回まで）。3回取得しても確定しない場合はユーザーに報告し、判断を仰ぐ。
