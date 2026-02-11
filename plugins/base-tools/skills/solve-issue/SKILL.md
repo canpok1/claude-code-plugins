@@ -34,7 +34,7 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Skill(set
     - 現在のブランチが `main` の場合、Issue内容に基づいたブランチ名を決定する。
     - ブランチ名の形式: `feature/issue-{Issue番号}-{簡潔な説明}`（例: `feature/issue-42-add-login`）
     - setup-worktree スキルを呼び出してworktreeを作成し、作業ディレクトリを切り替える。
-    - 現在のブランチが `main` 以外の場合、そのブランチで作業を続行するかユーザーに確認する（worktree作成はスキップ）。
+    - 現在のブランチが `main` 以外の場合、ユーザー確認なしでworktree作成をスキップし、現在のブランチでそのまま作業を続行する。
 
 3. 実装を行う。
     - Issueの要件に基づいてコードの修正・追加を行う。
