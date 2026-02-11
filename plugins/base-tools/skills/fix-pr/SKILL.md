@@ -31,7 +31,10 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(slee
             - 作業ツリーが clean でない場合: 未コミットの変更をユーザーに報告し、続行方法の判断を仰ぐ。
             - コマンド: `gh pr view {PR番号} --json baseRefName --jq '.baseRefName'` でベースブランチ名を取得し、`git fetch origin {ベースブランチ} && git merge origin/{ベースブランチ}` でマージする。
         - `DIRTY`: コンフリクトが存在する。PRブランチへ checkout しベースブランチをマージしてコンフリクト解消を試みる。解消が困難な場合はコンフリクト箇所をユーザーに報告し、判断を仰ぐ。
-        - `BLOCKED`: 必須チェックまたは必須レビューが未完了。手順3へ進む。
+        - `BLOCKED`: 必須チェックまたは必須レビューが未完了。
+            - `gh pr view {PR番号} --json reviewDecision --jq '.reviewDecision'` で確認する。
+            - `REVIEW_REQUIRED` または `CHANGES_REQUESTED` の場合: レビュー承認が必要、または変更が要求されていることをユーザーに報告し、対応を待つか判断を仰ぐ。
+            - それ以外の場合: 手順3へ進む。
         - `CLEAN`: マージ可能な状態。手順3へ進む。
         - `UNSTABLE`: 必須でないチェックが失敗しているがマージは可能。手順3へ進む。
         - `HAS_HOOKS`: マージフックが設定されている。手順3へ進む。
@@ -107,7 +110,10 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(slee
         - `CLEAN`, `UNSTABLE`, `HAS_HOOKS`: マージ可能。手順10へ進む。
         - `BEHIND`: ベースブランチをマージし、手順3に戻る（手順7の回数制限の対象）。
         - `DIRTY`: コンフリクト解消を試みる。解消できた場合はコミット・プッシュして手順3に戻る（手順7の回数制限の対象）。解消が困難な場合はユーザーに報告し、判断を仰ぐ。
-        - `BLOCKED`: 必須チェックまたは必須レビューが未完了。手順3に戻りCIの完了を待機する（手順7の回数制限の対象）。
+        - `BLOCKED`: 必須チェックまたは必須レビューが未完了。
+            - `gh pr view {PR番号} --json reviewDecision --jq '.reviewDecision'` で確認する。
+            - `REVIEW_REQUIRED` または `CHANGES_REQUESTED` の場合: レビュー承認が必要、または変更が要求されていることをユーザーに報告し、対応を待つか判断を仰ぐ。
+            - それ以外の場合: 手順3に戻りCIの完了を待機する（手順7の回数制限の対象）。
         - `DRAFT`: ドラフトPRである旨をユーザーに報告し、続行するか判断を仰ぐ。
         - `UNKNOWN` または `null`: 10秒待機してから再取得する（最大3回まで）。3回取得しても確定しない場合はユーザーに報告し、判断を仰ぐ。
 10. PRのマージを行う。
