@@ -26,7 +26,7 @@ WORKTREE_PATH="${WORKTREE_BASE}/${BRANCH_DIR}"
 # 事前チェック: worktreeパスが既に存在するか
 if [[ -d "${WORKTREE_PATH}" ]]; then
   # git worktree listに含まれるか確認
-  if git worktree list | grep -q "${WORKTREE_PATH}"; then
+  if git worktree list | grep -qF "${WORKTREE_PATH}"; then
     echo "${WORKTREE_PATH}"
     exit 0
   else
