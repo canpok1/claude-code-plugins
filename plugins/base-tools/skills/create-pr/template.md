@@ -12,3 +12,6 @@ Fixes: #xx
 ## その他
 <!-- 補足事項など -->
 <!-- 補足事項がない場合はセクションごと削除 -->
+
+---
+🤖 Generated with [Claude Code](https://claude.ai/claude-code)

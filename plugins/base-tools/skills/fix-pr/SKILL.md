@@ -77,7 +77,7 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
               "query": "mutation($threadId:ID!, $body:String!) { addPullRequestReviewThreadReply(input: {pullRequestReviewThreadId: $threadId, body: $body}) { comment { id body } } }",
               "variables": {
                 "threadId": "{スレッドID}",
-                "body": "{返信内容}"
+                "body": "{返信内容}\n\n---\n🤖 Generated with [Claude Code](https://claude.ai/claude-code)"
               }
             }
             EOF
