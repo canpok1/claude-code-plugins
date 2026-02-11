@@ -88,13 +88,13 @@ else
 fi
 
 if [[ "${EXT}" == "tar.gz" ]]; then
-  if ! tar -xzf "gh.${EXT}"; then
-    echo "Error: Failed to extract gh.${EXT}" >&2
+  if ! tar -xzf "${ARCHIVE}"; then
+    echo "Error: Failed to extract ${ARCHIVE}" >&2
     exit 1
   fi
 else
-  if ! unzip -q "gh.${EXT}"; then
-    echo "Error: Failed to extract gh.${EXT}" >&2
+  if ! unzip -q "${ARCHIVE}"; then
+    echo "Error: Failed to extract ${ARCHIVE}" >&2
     exit 1
   fi
 fi
