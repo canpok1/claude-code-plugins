@@ -1,0 +1,46 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(cp:*)",
+      "Bash(done)",
+      "Bash(echo:*)",
+      "Bash(for:*)",
+      "Bash(gh api:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr view:*)",
+      "Bash(git add:*)",
+      "Bash(git checkout:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(grep:*)",
+      "Bash(jq:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(printf:*)",
+      "Bash(tail:*)",
+      "Skill(create-pr)",
+      "Skill(fix-pr)",
+      "Skill(retro)",
+      "Skill(setup-worktree)",
+      "Skill(solve-issue)",
+      "Skill(teardown-worktree)"
+    ],
+    "deny": [
+      "Bash(git add --all)",
+      "Bash(git add .)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git rebase:*)",
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)",
+      "Read(.env)",
+      "Write(.env)"
+    ],
+    "ask": ["Bash(git reset:*)"]
+  }
+}
