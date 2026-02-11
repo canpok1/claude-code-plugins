@@ -113,8 +113,13 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
         - `DRAFT`: ドラフトPRである旨をユーザーに報告し、続行するか判断を仰ぐ。
         - `UNKNOWN` または `null`: 10秒待機してから再取得する（最大3回まで）。3回取得しても確定しない場合はユーザーに報告し、判断を仰ぐ。
 10. PRのマージを行う。
-    - コマンド: `gh pr merge {PR番号}`
-    - マージ方式はリポジトリのデフォルト設定に従う。
+    - リポジトリで許可されているマージ方式を確認する。
+        - コマンド: `gh api repos/{OWNER}/{REPO} --jq '{squash: .allow_squash_merge, merge: .allow_merge_commit, rebase: .allow_rebase_merge}'`
+    - 以下の優先順位でマージ方式を選択し、対応するフラグを使用する：
+        1. squash merge が許可されている場合: `--squash`
+        2. merge commit が許可されている場合: `--merge`
+        3. rebase merge が許可されている場合: `--rebase`
+    - コマンド: `gh pr merge {PR番号} {選択したマージ方式フラグ}`
     - マージに成功した場合は完了をユーザーに報告する。
     - マージに失敗した場合、失敗理由を確認し以下の対応を行う：
         - behind状態: ベースブランチをマージし、手順3に戻る（手順7の回数制限の対象）。
