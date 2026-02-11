@@ -1,7 +1,7 @@
 ---
 name: fix-pr
 description: プルリクエストのCI状態とレビューコメントを確認し、必要な修正と返信を行います。完了条件を満たした場合は自動的にPRをマージします。PR作成後にCI失敗やレビューコメントへの対応が必要な場合や、`/fix-pr` コマンドが実行された場合に使用してください。
-allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(sleep:*)
+allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(sleep *)
 ---
 
 ## 手順

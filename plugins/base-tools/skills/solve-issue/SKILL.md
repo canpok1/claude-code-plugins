@@ -3,7 +3,7 @@ name: solve-issue
 description: GitHub Issueの内容を把握し、実装・コミット・自己レビュー・PR作成・マージまでを一貫して行います。`/solve-issue {Issue番号}` で使用してください。
 argument-hint: "[issue-number]"
 disable-model-invocation: true
-allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Skill(setup-worktree), Skill(create-pr), Skill(fix-pr), Skill(teardown-worktree), Skill(retro)
+allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Skill(setup-worktree), Skill(create-pr), Skill(fix-pr), Skill(teardown-worktree), Skill(retro)
 ---
 
 ## 手順

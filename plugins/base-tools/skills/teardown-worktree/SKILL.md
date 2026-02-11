@@ -1,7 +1,7 @@
 ---
 name: teardown-worktree
 description: 現在のworktreeを削除し、元のリポジトリに作業ディレクトリを戻します。worktreeでの作業が完了した際に使用してください。
-allowed-tools: Bash(git:*), Bash(cd:*), Bash(pwd:*)
+allowed-tools: Bash(git *), Bash(cd *), Bash(pwd *)
 ---
 
 ## 手順
