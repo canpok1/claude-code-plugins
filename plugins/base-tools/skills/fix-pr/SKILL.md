@@ -82,20 +82,6 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
             }
             EOF
             ```
-    - 返信後の resolve ポリシー：
-        - bot レビュアーのスレッド: 返信後に `resolveReviewThread` mutation で resolve する。
-        - 人間のレビュアーのスレッド: 返信のみ行う。resolve はレビュアー自身に委ねる。
-    - bot スレッドの resolve コマンド:
-        ```bash
-        gh api graphql --input - <<'EOF'
-        {
-          "query": "mutation($threadId:ID!) { resolveReviewThread(input: {threadId: $threadId}) { thread { id isResolved } } }",
-          "variables": {
-            "threadId": "{スレッドID}"
-          }
-        }
-        EOF
-        ```
 7. 完了条件を満たしているか確認する。
     - CIが未完了の場合は `gh pr checks {PR番号} --watch` を使用してCIの完了を待機してから手順2に戻る。
     - その他の条件を満たしていない場合は未完了の条件をユーザーに報告し、30秒待機してから手順2に戻る。
@@ -141,10 +127,10 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
 
 以下の全てを満たすこと：
 - [ ] mergeStateStatus が `CLEAN`, `UNSTABLE`, `HAS_HOOKS` のいずれかである
-- [ ] 未解決のレビュースレッドへの対応が完了している（返信済み、bot スレッドは resolve 済み）
+- [ ] 未解決のレビュースレッドへの対応が完了している（返信済み）
 - [ ] CI が全て成功している
 
 ## 注意点
 - 返信時はスレッドの投稿者全員に対してメンションすること
 - マージ後にブランチの自動削除は行わない
-- bot レビュアーのスレッドは対応後に resolve する。人間のレビュアーのスレッドは resolve せず、レビュアー自身の判断に委ねる
+- レビュースレッドの resolve は行わない。resolve はレビュアー自身の判断に委ねる
