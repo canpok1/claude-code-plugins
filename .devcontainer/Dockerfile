@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN chown vscode:vscode /workspaces
+RUN mkdir -p /workspaces && chown vscode:vscode /workspaces
 
 USER vscode
 
