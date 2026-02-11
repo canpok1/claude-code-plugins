@@ -42,6 +42,19 @@
       "Read(.env)",
       "Write(.env)"
     ],
-    "ask": ["Bash(git reset *)"]
+    "ask": [
+      "Bash(git reset *)"
+    ]
+  },
+  "enabledPlugins": {
+    "base-tools@canpok1-plugins": true
+  },
+  "extraKnownMarketplaces": {
+    "canpok1-plugins": {
+      "source": {
+        "source": "directory",
+        "path": "./"
+      }
+    }
   }
 }
