@@ -10,24 +10,33 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
 
 タスク進捗：
 - [ ] ステップ1：プルリクエストの番号を特定する
-- [ ] ステップ2：PRブランチがベースブランチより遅れていないか確認する
+- [ ] ステップ2：mergeStateStatus を確認し状態に応じて対応する
 - [ ] ステップ3：CIの終了を待機する
 - [ ] ステップ4：CIの結果を詳細に把握する
 - [ ] ステップ5：レビューコメントを把握する
 - [ ] ステップ6：方針に従って対応を行う
 - [ ] ステップ7：完了条件を満たしているか確認する
 - [ ] ステップ8：Issueとの紐付けを確認する
-- [ ] ステップ9：マージ前にbehind状態を再確認する
+- [ ] ステップ9：マージ前に mergeStateStatus を再確認する
 - [ ] ステップ10：PRのマージを行う
 
 1. プルリクエストの番号を特定する。
     - コマンド: `gh pr view --json number --jq '.number'`
     - PRが存在しない場合はユーザーに報告し、作業を中断する。
-2. PRブランチがベースブランチより遅れていないか確認する。
+2. PRの `mergeStateStatus` を確認し、状態に応じて対応する。
     - コマンド: `gh pr view {PR番号} --json mergeStateStatus --jq '.mergeStateStatus'`
-    - `BEHIND` の場合、PRブランチへ checkout し、作業ツリーがクリーンであることを確認してからベースブランチをマージする。
-        - 事前確認: `gh pr checkout {PR番号}` でPRブランチへ移動し、`git status --porcelain` が空であることを確認する。
-        - コマンド: `gh pr view {PR番号} --json baseRefName --jq '.baseRefName'` でベースブランチ名を取得し、`git fetch origin {ベースブランチ} && git merge origin/{ベースブランチ}` でマージする。
+    - 状態別の対応：
+        - `BEHIND`: PRブランチへ checkout し、作業ツリーがクリーンであることを確認してからベースブランチをマージする。
+            - 事前確認: `gh pr checkout {PR番号}` でPRブランチへ移動し、`git status --porcelain` が空であることを確認する。
+            - 作業ツリーが clean でない場合: 未コミットの変更をユーザーに報告し、続行方法の判断を仰ぐ。
+            - コマンド: `gh pr view {PR番号} --json baseRefName --jq '.baseRefName'` でベースブランチ名を取得し、`git fetch origin {ベースブランチ} && git merge origin/{ベースブランチ}` でマージする。
+        - `DIRTY`: コンフリクトが存在する。PRブランチへ checkout しベースブランチをマージしてコンフリクト解消を試みる。解消が困難な場合はコンフリクト箇所をユーザーに報告し、判断を仰ぐ。
+        - `BLOCKED`: 必須チェックまたは必須レビューが未完了。手順3へ進む。
+        - `CLEAN`: マージ可能な状態。手順3へ進む。
+        - `UNSTABLE`: 必須でないチェックが失敗しているがマージは可能。手順3へ進む。
+        - `HAS_HOOKS`: マージフックが設定されている。手順3へ進む。
+        - `DRAFT`: ドラフトPRである旨をユーザーに報告し、続行するか判断を仰ぐ。
+        - `UNKNOWN` または `null`: 状態が未確定。10秒待機してから再取得する（最大3回まで）。3回取得しても `UNKNOWN`/`null` の場合は手順3へ進む。
 3. CIの終了を待機する。
     - コマンド: `gh pr checks {PR番号} --watch`
     - 全チェックが完了するまで待機する。
@@ -50,8 +59,14 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
         EOF
         ```
     - `hasNextPage` が true の間は `variables` に `"after": "{endCursor}"` を追加して繰り返し、全スレッドを取得する。
-    - 改修提案かつ対応が必要: コード修正と返信
-    - 改修提案かつ対応が不要: 理由を添えて返信
+    - 取得したスレッドを以下の基準でフィルタリングする：
+        - `isResolved` が true → 対応済みのためスキップ
+        - `isOutdated` が true かつ未解決 → 最新コードで指摘内容が解消済みか確認し、解消済みならスキップ
+        - 上記以外 → 対応が必要
+    - スレッド投稿者が bot かどうかを判別する（ログイン名に `[bot]` サフィックスがある、または `github-actions`, `codecov`, `dependabot`, `renovate` 等の既知の bot アカウント）。
+    - 対応が必要なスレッドについて方針を決める：
+        - 改修提案かつ対応が必要: コード修正と返信
+        - 改修提案かつ対応が不要: 理由を添えて返信
 6. 手順4と5で決めた方針に従って対応を行う。
     - CI失敗への対応とレビューコメントへのコード修正をまとめて行い、コミット・プッシュする。
     - 各レビューコメントスレッドへ返信を行う。
@@ -67,6 +82,20 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
             }
             EOF
             ```
+    - 返信後の resolve ポリシー：
+        - bot レビュアーのスレッド: 返信後に `resolveReviewThread` mutation で resolve する。
+        - 人間のレビュアーのスレッド: 返信のみ行う。resolve はレビュアー自身に委ねる。
+    - bot スレッドの resolve コマンド:
+        ```bash
+        gh api graphql --input - <<'EOF'
+        {
+          "query": "mutation($threadId:ID!) { resolveReviewThread(input: {threadId: $threadId}) { thread { id isResolved } } }",
+          "variables": {
+            "threadId": "{スレッドID}"
+          }
+        }
+        EOF
+        ```
 7. 完了条件を満たしているか確認する。
     - CIが未完了の場合は `gh pr checks {PR番号} --watch` を使用してCIの完了を待機してから手順2に戻る。
     - その他の条件を満たしていない場合は未完了の条件をユーザーに報告し、30秒待機してから手順2に戻る。
@@ -88,11 +117,15 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
     - 紐付けがある場合は手順9へ進む。
     - 紐付けがない場合（`closingIssuesReferences` が空）、ユーザーに警告し、続行の承認を得る。
     - ユーザーが続行を承認した場合は手順9へ進む。承認しない場合は作業を中断する。
-9. マージ前にbehind状態を再確認する。
+9. マージ前に `mergeStateStatus` を再確認する。
     - コマンド: `gh pr view {PR番号} --json mergeStateStatus --jq '.mergeStateStatus'`
-    - behind状態が `null` の場合は10秒待機してから再取得する（最大3回まで）。
-    - behind状態が `BEHIND` の場合はベースブランチをマージし、手順3に戻る（手順7の回数制限の対象）。
-    - behind状態が `BEHIND` でない場合は手順10へ進む。
+    - 状態別の対応：
+        - `CLEAN`, `UNSTABLE`, `HAS_HOOKS`: マージ可能。手順10へ進む。
+        - `BEHIND`: ベースブランチをマージし、手順3に戻る（手順7の回数制限の対象）。
+        - `DIRTY`: コンフリクト解消を試みる。解消できた場合はコミット・プッシュして手順3に戻る（手順7の回数制限の対象）。解消が困難な場合はユーザーに報告し、判断を仰ぐ。
+        - `BLOCKED`: 必須チェックまたは必須レビューが未完了。手順3に戻りCIの完了を待機する（手順7の回数制限の対象）。
+        - `DRAFT`: ドラフトPRである旨をユーザーに報告し、続行するか判断を仰ぐ。
+        - `UNKNOWN` または `null`: 10秒待機してから再取得する（最大3回まで）。3回取得しても確定しない場合はユーザーに報告し、判断を仰ぐ。
 10. PRのマージを行う。
     - コマンド: `gh pr merge {PR番号}`
     - マージ方式はリポジトリのデフォルト設定に従う。
@@ -107,11 +140,11 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
 ## 完了条件
 
 以下の全てを満たすこと：
-- [ ] PRブランチがベースブランチに対して遅れていない（behind状態でない）
-- [ ] 改修提案への対応が完了し、返信済み
-- [ ] 対応不要なコメントへの返信が完了している
+- [ ] mergeStateStatus が `CLEAN`, `UNSTABLE`, `HAS_HOOKS` のいずれかである
+- [ ] 未解決のレビュースレッドへの対応が完了している（返信済み、bot スレッドは resolve 済み）
 - [ ] CI が全て成功している
 
 ## 注意点
 - 返信時はスレッドの投稿者全員に対してメンションすること
 - マージ後にブランチの自動削除は行わない
+- bot レビュアーのスレッドは対応後に resolve する。人間のレビュアーのスレッドは resolve せず、レビュアー自身の判断に委ねる
