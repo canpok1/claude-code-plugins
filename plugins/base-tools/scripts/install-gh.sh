@@ -63,9 +63,28 @@ echo "Downloading gh ${VERSION} for ${OS}/${ARCH}..."
 TEMP_DIR=$(mktemp -d)
 
 cd "${TEMP_DIR}"
-if ! curl -fsSL "${URL}" -o "gh.${EXT}"; then
+ARCHIVE="gh_${VERSION}_${OS}_${ARCH}.${EXT}"
+if ! curl -fsSL "${URL}" -o "${ARCHIVE}"; then
   echo "Error: Failed to download from ${URL}" >&2
   exit 1
+fi
+
+# チェックサム検証
+CHECKSUMS="gh_${VERSION}_checksums.txt"
+if ! curl -fsSL "https://github.com/cli/cli/releases/download/v${VERSION}/${CHECKSUMS}" -o "${CHECKSUMS}"; then
+  echo "Error: Failed to download checksums file" >&2
+  exit 1
+fi
+EXPECTED_LINE=$(grep " ${ARCHIVE}$" "${CHECKSUMS}" || true)
+if [[ -z "${EXPECTED_LINE}" ]]; then
+  echo "Error: Checksum entry not found for ${ARCHIVE}" >&2
+  exit 1
+fi
+echo "Verifying checksum..."
+if command -v sha256sum >/dev/null 2>&1; then
+  echo "${EXPECTED_LINE}" | sha256sum -c -
+else
+  echo "${EXPECTED_LINE}" | shasum -a 256 -c -
 fi
 
 if [[ "${EXT}" == "tar.gz" ]]; then
