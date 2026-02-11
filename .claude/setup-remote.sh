@@ -16,6 +16,7 @@ SKILLS_TARGET="${HOME}/.claude/skills"
 if [[ -d "${SKILLS_SOURCE}" ]]; then
   mkdir -p "${SKILLS_TARGET}"
   for skill_dir in "${SKILLS_SOURCE}"/*/; do
+    [[ -d "${skill_dir}" ]] || continue
     skill_name=$(basename "${skill_dir}")
     link_path="${SKILLS_TARGET}/${skill_name}"
     if [[ ! -e "${link_path}" ]]; then
