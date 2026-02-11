@@ -1,7 +1,7 @@
 ---
 name: retro
 description: 作業セッションを振り返り、`.claude/`配下の設定改善点を分析してGitHub Issueを作成します。会話セッション終了時に使用してください。
-allowed-tools: Read, Grep, Glob, Edit, Write, Bash(gh:*)
+allowed-tools: Read, Grep, Glob, Edit, Write, Bash(gh *)
 ---
 
 ## 手順

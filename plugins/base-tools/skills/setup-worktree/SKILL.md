@@ -2,7 +2,7 @@
 name: setup-worktree
 description: 指定されたブランチ名でgit worktreeを作成し、作業ディレクトリを切り替えます。`/setup-worktree {ブランチ名}` で使用してください。
 argument-hint: "[branch-name]"
-allowed-tools: Bash(git:*), Bash(mkdir:*), Bash(cd:*), Bash(pwd:*), Bash(test:*)
+allowed-tools: Bash(git *), Bash(mkdir *), Bash(cd *), Bash(pwd *), Bash(test *)
 ---
 
 ## 手順
