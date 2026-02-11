@@ -39,23 +39,45 @@ case "${ARCH}" in
     ;;
 esac
 
-OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+# GitHub CLIのアセット名はOS表記が異なり、配布形式もOS毎に異なる
+RAW_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+case "${RAW_OS}" in
+  linux)
+    OS="linux"
+    EXT="tar.gz"
+    ;;
+  darwin)
+    OS="macOS"
+    EXT="zip"
+    ;;
+  *)
+    echo "Error: Unsupported OS: ${RAW_OS}" >&2
+    exit 1
+    ;;
+esac
 
-URL="https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_${OS}_${ARCH}.tar.gz"
+URL="https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_${OS}_${ARCH}.${EXT}"
 
 echo "Downloading gh ${VERSION} for ${OS}/${ARCH}..."
 
 TEMP_DIR=$(mktemp -d)
 
 cd "${TEMP_DIR}"
-if ! curl -fsSL "${URL}" -o gh.tar.gz; then
+if ! curl -fsSL "${URL}" -o "gh.${EXT}"; then
   echo "Error: Failed to download from ${URL}" >&2
   exit 1
 fi
 
-if ! tar -xzf gh.tar.gz; then
-  echo "Error: Failed to extract gh.tar.gz" >&2
-  exit 1
+if [[ "${EXT}" == "tar.gz" ]]; then
+  if ! tar -xzf "gh.${EXT}"; then
+    echo "Error: Failed to extract gh.${EXT}" >&2
+    exit 1
+  fi
+else
+  if ! unzip -q "gh.${EXT}"; then
+    echo "Error: Failed to extract gh.${EXT}" >&2
+    exit 1
+  fi
 fi
 
 GH_BINARY="gh_${VERSION}_${OS}_${ARCH}/bin/gh"
