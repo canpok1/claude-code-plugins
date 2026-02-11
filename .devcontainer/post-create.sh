@@ -5,8 +5,9 @@ WORKSPACE_DIR=$(realpath "$SCRIPT_DIR/..")
 PLUGINS_DIR="$WORKSPACE_DIR/plugins"
 
 # setup claude plugin
-echo "alias claude='claude --plugin-dir ${PLUGINS_DIR}/my-workflow'" >> ~/.bashrc
-echo "alias claude='claude --plugin-dir ${PLUGINS_DIR}/my-workflow'" >> ~/.zshrc
+CLAUDE_COMMAND="claude --plugin-dir ${PLUGINS_DIR}/base-tools --plugin-dir ${PLUGINS_DIR}/my-workflow"
+echo "alias claude='${CLAUDE_COMMAND}'" >> ~/.bashrc
+echo "alias claude='${CLAUDE_COMMAND}'" >> ~/.zshrc
 
 # setup tmux
 ln -sf "$SCRIPT_DIR/.tmux.conf" ~/.tmux.conf
