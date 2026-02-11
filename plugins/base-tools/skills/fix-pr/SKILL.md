@@ -100,9 +100,7 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(slee
         }
         EOF
         ```
-    - 紐付けがある場合は手順9へ進む。
-    - 紐付けがない場合（`closingIssuesReferences` が空）、ユーザーに警告し、続行の承認を得る。
-    - ユーザーが続行を承認した場合は手順9へ進む。承認しない場合は作業を中断する。
+    - 紐付けの有無に関わらず手順9へ進む。
 9. マージ前に `mergeStateStatus` を再確認する。
     - コマンド: `gh pr view {PR番号} --json mergeStateStatus --jq '.mergeStateStatus'`
     - 状態別の対応：
