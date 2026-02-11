@@ -28,6 +28,7 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
     - 状態別の対応：
         - `BEHIND`: PRブランチへ checkout し、作業ツリーがクリーンであることを確認してからベースブランチをマージする。
             - 事前確認: `gh pr checkout {PR番号}` でPRブランチへ移動し、`git status --porcelain` が空であることを確認する。
+            - 作業ツリーが clean でない場合: 未コミットの変更をユーザーに報告し、続行方法の判断を仰ぐ。
             - コマンド: `gh pr view {PR番号} --json baseRefName --jq '.baseRefName'` でベースブランチ名を取得し、`git fetch origin {ベースブランチ} && git merge origin/{ベースブランチ}` でマージする。
         - `DIRTY`: コンフリクトが存在する。PRブランチへ checkout しベースブランチをマージしてコンフリクト解消を試みる。解消が困難な場合はコンフリクト箇所をユーザーに報告し、判断を仰ぐ。
         - `BLOCKED`: 必須チェックまたは必須レビューが未完了。手順3へ進む。
