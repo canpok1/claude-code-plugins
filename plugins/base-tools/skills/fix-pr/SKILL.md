@@ -119,6 +119,7 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
         1. squash merge が許可されている場合: `--squash`
         2. merge commit が許可されている場合: `--merge`
         3. rebase merge が許可されている場合: `--rebase`
+    - 全てのマージ方式が無効の場合: 利用可能なマージ方式がない旨をユーザーに報告し、リポジトリ設定の確認を促して作業を中断する。
     - コマンド: `gh pr merge {PR番号} {選択したマージ方式フラグ}`
     - マージに成功した場合は完了をユーザーに報告する。
     - マージに失敗した場合、失敗理由を確認し以下の対応を行う：
