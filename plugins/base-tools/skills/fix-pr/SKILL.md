@@ -36,20 +36,55 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Bash(slee
     - 一時的な問題（インフラ障害、flaky test等）の場合は `gh run rerun {run-id}` で再実行し、手順3に戻る。同一ワークフローの再実行は最大2回まで。
     - コード修正が必要な場合は、対応方針を決めて手順6で修正する。
 5. レビューコメントを把握し、対応方針を決める。
-    - コマンド: `gh api graphql -f query='query($owner:String!, $repo:String!, $number:Int!, $after:String) { repository(owner:$owner, name:$repo) { pullRequest(number:$number) { reviewThreads(first:100, after:$after) { pageInfo { hasNextPage endCursor } nodes { id isResolved isOutdated comments(first:100) { nodes { author { login } body } } } } } } }' -F owner='{OWNER}' -F repo='{REPO}' -F number={PR番号}`
-    - `hasNextPage` が true の間は `-F after='{endCursor}'` を渡して繰り返し、全スレッドを取得する。
+    - コマンド:
+        ```bash
+        gh api graphql --input - <<'EOF'
+        {
+          "query": "query($owner:String!, $repo:String!, $number:Int!, $after:String) { repository(owner:$owner, name:$repo) { pullRequest(number:$number) { reviewThreads(first:100, after:$after) { pageInfo { hasNextPage endCursor } nodes { id isResolved isOutdated comments(first:100) { nodes { author { login } body } } } } } } }",
+          "variables": {
+            "owner": "{OWNER}",
+            "repo": "{REPO}",
+            "number": {PR番号}
+          }
+        }
+        EOF
+        ```
+    - `hasNextPage` が true の間は `variables` に `"after": "{endCursor}"` を追加して繰り返し、全スレッドを取得する。
     - 改修提案かつ対応が必要: コード修正と返信
     - 改修提案かつ対応が不要: 理由を添えて返信
 6. 手順4と5で決めた方針に従って対応を行う。
     - CI失敗への対応とレビューコメントへのコード修正をまとめて行い、コミット・プッシュする。
     - 各レビューコメントスレッドへ返信を行う。
-        - コマンド: `gh api graphql -f query='mutation($threadId:ID!, $body:String!) { addPullRequestReviewThreadReply(input: {pullRequestReviewThreadId: $threadId, body: $body}) { comment { id body } } }' -F threadId='{スレッドID}' -F body='{返信内容}'`
+        - コマンド:
+            ```bash
+            gh api graphql --input - <<'EOF'
+            {
+              "query": "mutation($threadId:ID!, $body:String!) { addPullRequestReviewThreadReply(input: {pullRequestReviewThreadId: $threadId, body: $body}) { comment { id body } } }",
+              "variables": {
+                "threadId": "{スレッドID}",
+                "body": "{返信内容}"
+              }
+            }
+            EOF
+            ```
 7. 完了条件を満たしているか確認する。
     - CIが未完了の場合は `gh pr checks {PR番号} --watch` を使用してCIの完了を待機してから手順2に戻る。
     - その他の条件を満たしていない場合は未完了の条件をユーザーに報告し、30秒待機してから手順2に戻る。
     - 手順2からの再実施は最大10回まで。10回を超えた場合は未完了の条件と試行内容をユーザーに報告し、続行するか判断を仰ぐ。
 8. Issueとの紐付けを確認する。
-    - コマンド: `gh api graphql -f query='query { repository(owner:"{OWNER}", name:"{REPO}") { pullRequest(number:{PR番号}) { closingIssuesReferences(first:10) { nodes { number title } } } } }'`
+    - コマンド:
+        ```bash
+        gh api graphql --input - <<'EOF'
+        {
+          "query": "query($owner:String!, $repo:String!, $number:Int!) { repository(owner:$owner, name:$repo) { pullRequest(number:$number) { closingIssuesReferences(first:10) { nodes { number title } } } } }",
+          "variables": {
+            "owner": "{OWNER}",
+            "repo": "{REPO}",
+            "number": {PR番号}
+          }
+        }
+        EOF
+        ```
     - 紐付けがある場合は手順9へ進む。
     - 紐付けがない場合（`closingIssuesReferences` が空）、ユーザーに警告し、続行の承認を得る。
     - ユーザーが続行を承認した場合は手順9へ進む。承認しない場合は作業を中断する。
