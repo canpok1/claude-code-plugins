@@ -32,8 +32,7 @@ allowed-tools: Bash(git:*), Bash(mkdir:*), Bash(cd:*), Bash(pwd:*), Bash(test:*)
     WORKTREE_BASE="${PROJECT_ROOT}/../${PROJECT_NAME}.worktrees"
     mkdir -p "${WORKTREE_BASE}"
     ```
-    - `mkdir -p` が権限エラー（`Permission denied`）で失敗した場合は、以下のメッセージをユーザーに報告し、**作業を中止**する：
-      > worktreeベースディレクトリ `{WORKTREE_BASE}` の作成に失敗しました。親ディレクトリの書き込み権限がありません。
+    - `mkdir -p` が失敗した場合は理由を問わず**作業を中止**する。エラー内容をユーザーに報告する。特に権限エラー（`Permission denied`）の場合は、以下のメッセージも併せて報告する：
       > devcontainer環境の場合は `.devcontainer/Dockerfile` で `/workspaces` ディレクトリのオーナーを変更してください。
     - `sudo` による回避は行わない。
 
