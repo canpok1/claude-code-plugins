@@ -27,7 +27,10 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git:*), Bash(gh:*), Skill(set
     - コマンド: `gh issue view $ARGUMENTS --json number,title,body,labels,assignees,milestone,state`
     - Issueが存在しない場合はユーザーに報告し、作業を中断する。
     - Issueが closed の場合はユーザーに報告し、続行するか判断を仰ぐ。
-    - Issueの内容（タイトル、本文、ラベル等）から実装要件を整理する。
+    - Issueのコメントを取得する。
+    - コマンド: `gh issue view $ARGUMENTS --comments`
+    - コメントにはオーナーやコントリビューターからの方針決定や要件の補足が含まれることがあるため、必ず確認する。
+    - Issueの内容（タイトル、本文、ラベル、コメント等）から実装要件を整理する。
     - 要件が不明確な場合はユーザーに確認する。
 
 2. `/setup-worktree` でworktreeを作成する。
