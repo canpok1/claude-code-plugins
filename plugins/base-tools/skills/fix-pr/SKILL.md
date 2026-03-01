@@ -94,14 +94,17 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(slee
     - 全スレッドが解決済み（`isResolved: true`）の場合、`reviewDecision` を確認する。
         - コマンド: `gh pr view {PR番号} --json reviewDecision --jq '.reviewDecision'`
         - `CHANGES_REQUESTED` または `REVIEW_REQUIRED` の場合:
-            1. PRコメントでレビュワーにapproveを依頼する。
+            1. 直近で同一のapprove依頼コメントを投稿済みか確認する。
+                - コマンド: `gh pr view {PR番号} --json comments --jq '.comments[].body'` で既存コメントを取得し、「全てのレビューコメントに対応しました。このPRをapproveしてください。」と同一の本文が存在するか確認する。
+                - 投稿済みの場合は手順2〜6を再投稿せずに手順7へ進む。
+            2. 未投稿の場合のみ、PRコメントでレビュワーにapproveを依頼する。
                 - コマンド: `gh pr comment {PR番号} --body "全てのレビューコメントに対応しました。このPRをapproveしてください。"`
-            2. 60秒待機する。
+            3. 60秒待機する。
                 - コマンド: `sleep 60`
-            3. `reviewDecision` を再確認する。
+            4. `reviewDecision` を再確認する。
                 - コマンド: `gh pr view {PR番号} --json reviewDecision --jq '.reviewDecision'`
-            4. `APPROVED` に変わった場合は手順7へ進む。
-            5. まだ `CHANGES_REQUESTED` または `REVIEW_REQUIRED` の場合も手順7へ進む（手順8の完了条件チェックで再評価される）。
+            5. `APPROVED` に変わった場合は手順7へ進む。
+            6. まだ `CHANGES_REQUESTED` または `REVIEW_REQUIRED` の場合も手順7へ進む（手順8の完了条件チェックで再評価される）。
         - `APPROVED` またはその他の場合: 手順7へ進む。
 7. 手順4と5で決めた方針に従って対応を行う。
     - CI失敗への対応とレビューコメントへのコード修正をまとめて行い、コミット・プッシュする。
