@@ -51,6 +51,12 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(slee
         - 10秒待機してからリトライする。
         - リトライは最大3回まで。
         - 3回リトライしてもチェックが登録されない場合は、チェック待機をスキップして手順4へ進む（CIが設定されていない、またはトリガー条件に合致しなかったと判断する）。
+    - `gh pr checks --watch` が5分以上経過しても完了しない場合（コマンドがタイムアウトした場合を含む）、CodeRabbit の rate limit による停止を確認する：
+        1. `gh pr checks {PR番号}` で各チェックの状態を確認する。
+        2. CodeRabbit のチェックが `pending` の場合、`gh pr comment {PR番号} --body "@coderabbitai review"` でレビューを再起動する。
+        3. 10分待機してから `gh pr checks {PR番号} --watch` で再度完了を待機する。
+        4. 再度 CodeRabbit が `pending` のままの場合は、手順3-2〜3-3を繰り返す（最大2回まで）。
+        5. 2回リトライしても CodeRabbit が完了しない場合は、CodeRabbit の完了を待たずに手順4へ進む。
 4. CIの結果を確認する。
     - コマンド: `gh pr checks {PR番号}`
     - 一時的な問題（インフラ障害、flaky test等）の場合は `gh run rerun {run-id}` で再実行し、手順3に戻る。同一ワークフローの再実行は最大2回まで。
