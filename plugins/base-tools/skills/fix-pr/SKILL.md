@@ -98,7 +98,8 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(slee
                 - コマンド: `gh pr view {PR番号} --json comments --jq '.comments[].body'` で既存コメントを取得し、「全てのレビューコメントに対応しました。このPRをapproveしてください。」と同一の本文が存在するか確認する。
                 - 投稿済みの場合はapprove依頼コメントを再投稿せずに手順7へ進む。
             2. 未投稿の場合のみ、PRコメントでレビュワーにapproveを依頼する。
-                - コマンド: `gh pr comment {PR番号} --body "全てのレビューコメントに対応しました。このPRをapproveしてください。"`
+                - `gh pr view {PR番号} --json reviews --jq '.reviews[].author.login'` で `CHANGES_REQUESTED` を出したレビュワーを特定し、コメント本文にメンション（`@{レビュワー名}`）を含める。
+                - コマンド: `gh pr comment {PR番号} --body "@{レビュワー名} 全てのレビューコメントに対応しました。このPRをapproveしてください。"`
             3. 60秒待機する。
                 - コマンド: `sleep 60`
             4. `reviewDecision` を再確認する。
