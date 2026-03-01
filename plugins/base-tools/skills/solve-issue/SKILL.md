@@ -3,7 +3,7 @@ name: solve-issue
 description: GitHub Issueの内容を把握し、実装・コミット・自己レビュー・PR作成・マージまでを一貫して行います。`/solve-issue {Issue番号}` で使用してください。
 argument-hint: "[issue-number]"
 disable-model-invocation: true
-allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Skill(setup-worktree), Skill(create-pr), Skill(fix-pr), Skill(teardown-worktree), Skill(retro)
+allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Skill(create-pr), Skill(fix-pr), Skill(retro)
 ---
 
 ## 手順
@@ -12,15 +12,13 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Skill(set
 
 タスク進捗：
 - [ ] ステップ1：Issueの内容を把握する
-- [ ] ステップ2：/setup-worktree でworktreeを作成する
-- [ ] ステップ3：実装を行う
-- [ ] ステップ4：コミットする
-- [ ] ステップ5：自己レビューを行う
-- [ ] ステップ6：レビュー指摘を修正する
-- [ ] ステップ7：/create-pr を実行する
-- [ ] ステップ8：/fix-pr を実行する
-- [ ] ステップ9：/teardown-worktree でworktreeを削除する
-- [ ] ステップ10：/retro を実行する
+- [ ] ステップ2：実装を行う
+- [ ] ステップ3：コミットする
+- [ ] ステップ4：自己レビューを行う
+- [ ] ステップ5：レビュー指摘を修正する
+- [ ] ステップ6：/create-pr を実行する
+- [ ] ステップ7：/fix-pr を実行する
+- [ ] ステップ8：/retro を実行する
 
 1. Issueの内容を把握する。
     - 引数 `$ARGUMENTS` からIssueの詳細を取得する。
@@ -33,25 +31,19 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Skill(set
     - Issueの内容（タイトル、本文、ラベル、コメント等）から実装要件を整理する。
     - 要件が不明確な場合はユーザーに確認する。
 
-2. `/setup-worktree` でworktreeを作成する。
-    - 現在のブランチが `main` の場合、Issue内容に基づいたブランチ名を決定する。
-    - ブランチ名の形式: `feature/issue-{Issue番号}-{簡潔な説明}`（例: `feature/issue-42-add-login`）
-    - setup-worktree スキルを呼び出してworktreeを作成し、作業ディレクトリを切り替える。
-    - 現在のブランチが `main` 以外の場合、ユーザー確認なしでworktree作成をスキップし、現在のブランチでそのまま作業を続行する。
-
-3. 実装を行う。
+2. 実装を行う。
     - Issueの要件に基づいてコードの修正・追加を行う。
     - 実装前に関連するコードベースを調査し、既存のパターンやアーキテクチャに従う。
     - テストが存在するプロジェクトの場合、必要に応じてテストも追加・修正する。
 
-4. コミットする。
+3. コミットする。
     - 変更内容を確認する。
     - コマンド: `git diff` で差分を確認する。
     - 意味のある単位でコミットする。
     - コミットメッセージにはIssue番号を含める（例: `#{Issue番号} {変更内容の要約}`）。
     - コマンド: `git add {対象ファイル}` → `git commit -m "{コミットメッセージ}"`
 
-5. 自己レビューを行う。
+4. 自己レビューを行う。
     - コミットした全変更を確認する。
     - コマンド: `git diff main...HEAD` でmainブランチからの全差分を確認する。
     - 以下の観点でレビューする：
@@ -64,24 +56,20 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Skill(set
         - **外部リソースの整合性**: ダウンロードしたファイルのチェックサム検証、依存関係のバージョン固定など
     - 問題を発見した場合はリストアップする。
 
-6. レビュー指摘を修正する。
-    - ステップ5で発見した問題を修正する。
-    - 修正後、再度コミットする（ステップ4と同様の手順）。
+5. レビュー指摘を修正する。
+    - ステップ4で発見した問題を修正する。
+    - 修正後、再度コミットする（ステップ3と同様の手順）。
     - 修正が完了したら再度自己レビューを行い、問題がないことを確認する。
     - 自己レビューと修正のサイクルは最大3回まで。3回を超えても問題が残る場合はユーザーに報告し、判断を仰ぐ。
 
-7. `/create-pr` を実行する。
+6. `/create-pr` を実行する。
     - create-pr スキルを呼び出してプルリクエストを作成する。
     - PR本文にはIssueへの参照を含めること（`Closes #{Issue番号}` または `Fixes #{Issue番号}`）。
 
-8. `/fix-pr` を実行する。
+7. `/fix-pr` を実行する。
     - fix-pr スキルを呼び出してCI確認・レビュー対応・マージを行う。
 
-9. `/teardown-worktree` でworktreeを削除する。
-    - teardown-worktree スキルを呼び出してworktreeを削除し、元のリポジトリに戻る。
-    - ステップ2でworktree作成をスキップした場合は、このステップもスキップする。
-
-10. `/retro` を実行する。
+8. `/retro` を実行する。
     - retro スキルを呼び出して作業セッションの振り返りを行う。
 
 ## 完了条件
@@ -91,7 +79,6 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Skill(set
 - [ ] 自己レビューで問題が検出されていない（または全て修正済み）
 - [ ] プルリクエストが作成されている
 - [ ] PRがマージされている
-- [ ] worktreeが削除され、元のリポジトリに作業ディレクトリが戻っている（worktreeを使用した場合）
 - [ ] retro が実行されている
 
 ## 注意点
@@ -99,4 +86,3 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Skill(set
 - 大規模な変更が必要な場合は、実装前にユーザーに方針を提示して承認を得ること
 - Issueに記載のない追加改善は行わず、Issueのスコープに集中すること
 - コミットメッセージにはIssue番号を含め、トレーサビリティを確保すること
-- worktreeでの作業中は cd で元のリポジトリに戻らないこと

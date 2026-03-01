@@ -25,9 +25,7 @@
       "Skill(create-pr)",
       "Skill(fix-pr)",
       "Skill(retro)",
-      "Skill(setup-worktree)",
-      "Skill(solve-issue)",
-      "Skill(teardown-worktree)"
+      "Skill(solve-issue)"
     ],
     "deny": [
       "Bash(git add --all)",
