@@ -3,8 +3,8 @@ name: monologue
 description: 作業開始時、作業終了時、想定外のことが起こった時に呼び出す独り言スキル。キャラクターになりきった一言コメントを通知する。
 argument-hint: "[キャラクター名]"
 allowed-tools:
-  - Bash(.claude/skills/monologue/scripts/monologue.sh *)
-  - Read
+  - "Bash(${CLAUDE_PLUGIN_ROOT}/skills/monologue/scripts/monologue.sh *)"
+  - "Read(${CLAUDE_PLUGIN_ROOT}/skills/monologue/characters/*.md)"
 ---
 
 作業の開始時や終了時に、キャラクターになりきった独り言を通知します。
@@ -27,7 +27,7 @@ allowed-tools:
 2. 通知確率（第1引数）、セリフ（第2引数）、スピーカーID（第3引数）、話速（第4引数）を `monologue.sh` に渡す
 
 ```bash
-.claude/skills/monologue/scripts/monologue.sh 通知確率 "（キャラクターの一言コメント）" スピーカーID 話速
+${CLAUDE_PLUGIN_ROOT}/skills/monologue/scripts/monologue.sh 通知確率 "（キャラクターの一言コメント）" スピーカーID 話速
 ```
 
 - 通知確率（第1引数・必須）: 1〜100の整数。メモリに保存された確率を渡す（デフォルト10）
@@ -52,7 +52,7 @@ allowed-tools:
 `$ARGUMENTS` で指定されたキャラクターの設定ファイルを読み込み、そのキャラクターになりきった一言コメントを生成する。
 
 - `$ARGUMENTS` が空の場合: デフォルトキャラクター「ずんだもん」を使用
-- キャラクター設定ファイル: `characters/{キャラクター名}.md`（例: `characters/zundamon.md`）
+- キャラクター設定ファイル: `${CLAUDE_PLUGIN_ROOT}/skills/monologue/characters/{キャラクター名}.md`（例: `${CLAUDE_PLUGIN_ROOT}/skills/monologue/characters/zundamon.md`）
 
 ## メモリに保存する設定項目
 
@@ -66,7 +66,7 @@ allowed-tools:
 
 ### monologue.sh の依存関係
 
-通知の実行に使用する `scripts/monologue.sh` は以下の前提条件を必要とする:
+通知の実行に使用する `${CLAUDE_PLUGIN_ROOT}/skills/monologue/scripts/monologue.sh` は以下の前提条件を必要とする:
 
 - **環境変数 `WORKSPACE_DIR`**: 必須。通知ファイルの出力先ルートディレクトリを指定する。未設定の場合、スクリプトはエラー終了する
 - **通知ディレクトリ**: `${WORKSPACE_DIR}/.tmp/notify/` に通知ファイルを書き出す。ディレクトリが存在しない場合はスクリプトが自動作成する
