@@ -6,10 +6,26 @@ fi
 
 PROBABILITY="$1"
 TEXT="$2"
-SPEAKER="${3:-3}"
+SPEAKER="$3"
+SPEED_SCALE="$4"
+
+if [ -z "$PROBABILITY" ]; then
+  echo "[ERROR] 通知確率（第1引数）は必須です"
+  exit 1
+fi
 
 if [ -z "$TEXT" ]; then
   echo "[ERROR] セリフ（第2引数）は必須です"
+  exit 1
+fi
+
+if [ -z "$SPEAKER" ]; then
+  echo "[ERROR] スピーカーID（第3引数）は必須です"
+  exit 1
+fi
+
+if [ -z "$SPEED_SCALE" ]; then
+  echo "[ERROR] 話速（第4引数）は必須です"
   exit 1
 fi
 
@@ -23,13 +39,18 @@ if ! [[ "$SPEAKER" =~ ^[0-9]+$ ]] || [ "$SPEAKER" -lt 1 ]; then
   exit 1
 fi
 
+if ! [[ "$SPEED_SCALE" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+  echo "[ERROR] speedScaleは正の数値で指定してください: '$SPEED_SCALE'"
+  exit 1
+fi
+
 # 乱数判定: ROLL <= PROBABILITY なら通知する
 ROLL=$((RANDOM % 100 + 1))
 if [ "$ROLL" -gt "$PROBABILITY" ]; then
   exit 0
 fi
 
-NOTIFY_DIR="${WORKSPACE_DIR}/tmp/notify"
+NOTIFY_DIR="${WORKSPACE_DIR}/.tmp/notify"
 mkdir -p "$NOTIFY_DIR"
-jq -cn --argjson speaker "$SPEAKER" --arg text "$TEXT" \
-  '{speaker: $speaker, text: $text}' > "${NOTIFY_DIR}/notify_$(($(date +%s%N)/1000000)).json"
+jq -cn --argjson speaker "$SPEAKER" --arg text "$TEXT" --argjson speedScale "$SPEED_SCALE" \
+  '{speaker: $speaker, text: $text, speedScale: $speedScale}' > "${NOTIFY_DIR}/notify_$(($(date +%s%N)/1000000)).json"
