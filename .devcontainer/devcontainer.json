@@ -14,6 +14,9 @@
 	"mounts": [
 		"source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
 	],
+	"remoteEnv": {
+		"WORKSPACE_DIR": "${containerWorkspaceFolder}"
+	},
 	"postCreateCommand": ".devcontainer/post-create.sh",
 	"waitFor": "postCreateCommand"
 
