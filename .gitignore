@@ -22,3 +22,6 @@ __pycache__/
 
 # Claude Code Local Settings
 .claude/settings.local.json
+
+# Temporary directory
+.tmp/
