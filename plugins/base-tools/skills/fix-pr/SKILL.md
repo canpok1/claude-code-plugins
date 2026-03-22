@@ -37,7 +37,25 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(slee
             - `REVIEW_REQUIRED` または `CHANGES_REQUESTED` の場合: GitHub APIのキャッシュにより古い状態が返される可能性があるため、以下のリトライを行う。
                 1. 10秒待機してから `reviewDecision` を再取得する。
                 2. 再取得しても `REVIEW_REQUIRED` または `CHANGES_REQUESTED` のままの場合、再度10秒待機して再取得する。
-                3. リトライは最大3回まで。3回リトライしても状態が変わらない場合、レビュー承認が必要または変更が要求されていることをユーザーに報告し、対応を待つか判断を仰ぐ。
+                3. リトライは最大3回まで。3回リトライしても状態が変わらない場合、CodeRabbitのapprove漏れチェックを行う。
+                   - 以下のコマンドでCodeRabbitのレビュー状態を取得する:
+                     ```bash
+                     # CodeRabbitのformal reviewを取得
+                     gh pr view {PR番号} --json reviews --jq '[.reviews[] | select(.author.login=="coderabbitai")] | last'
+
+                     # CodeRabbitのcommit status checkを取得
+                     gh pr view {PR番号} --json statusCheckRollup --jq '[.statusCheckRollup[] | select((.context // .name) | test("coderabbit"; "i"))]'
+
+                     # 全CIチェックの状態を取得
+                     gh pr view {PR番号} --json statusCheckRollup --jq '[.statusCheckRollup[] | {name: (.context // .name), state: (.state // .status // .conclusion)}]'
+                     ```
+                   - **approve漏れと判断する条件**（以下をすべて満たす場合）:
+                     - CodeRabbitのformal reviewが存在しない（`.reviews[]` が空）
+                     - CodeRabbitのcommit status checkが `SUCCESS`
+                     - CIが全て通過している
+                   - **アクション**:
+                     - approve漏れの場合: `gh pr comment {PR番号} --body "@coderabbitai approve"` を実行 → 手順3へ進む
+                     - approve漏れではない場合: レビュー承認が必要または変更が要求されていることをユーザーに報告し、対応を待つか判断を仰ぐ
                 4. リトライ中に `APPROVED` 等の別の状態に変わった場合は、手順3へ進む。
             - それ以外の場合: 手順3へ進む。
         - `CLEAN`: マージ可能な状態。手順3へ進む。
@@ -152,7 +170,25 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(gh *), Bash(slee
             - `REVIEW_REQUIRED` または `CHANGES_REQUESTED` の場合: GitHub APIのキャッシュにより古い状態が返される可能性があるため、以下のリトライを行う。
                 1. 10秒待機してから `reviewDecision` を再取得する。
                 2. 再取得しても `REVIEW_REQUIRED` または `CHANGES_REQUESTED` のままの場合、再度10秒待機して再取得する。
-                3. リトライは最大3回まで。3回リトライしても状態が変わらない場合、レビュー承認が必要または変更が要求されていることをユーザーに報告し、対応を待つか判断を仰ぐ。
+                3. リトライは最大3回まで。3回リトライしても状態が変わらない場合、CodeRabbitのapprove漏れチェックを行う。
+                   - 以下のコマンドでCodeRabbitのレビュー状態を取得する:
+                     ```bash
+                     # CodeRabbitのformal reviewを取得
+                     gh pr view {PR番号} --json reviews --jq '[.reviews[] | select(.author.login=="coderabbitai")] | last'
+
+                     # CodeRabbitのcommit status checkを取得
+                     gh pr view {PR番号} --json statusCheckRollup --jq '[.statusCheckRollup[] | select((.context // .name) | test("coderabbit"; "i"))]'
+
+                     # 全CIチェックの状態を取得
+                     gh pr view {PR番号} --json statusCheckRollup --jq '[.statusCheckRollup[] | {name: (.context // .name), state: (.state // .status // .conclusion)}]'
+                     ```
+                   - **approve漏れと判断する条件**（以下をすべて満たす場合）:
+                     - CodeRabbitのformal reviewが存在しない（`.reviews[]` が空）
+                     - CodeRabbitのcommit status checkが `SUCCESS`
+                     - CIが全て通過している
+                   - **アクション**:
+                     - approve漏れの場合: `gh pr comment {PR番号} --body "@coderabbitai approve"` を実行 → 手順3に戻りCIの完了を待機する（手順8の回数制限の対象）
+                     - approve漏れではない場合: レビュー承認が必要または変更が要求されていることをユーザーに報告し、対応を待つか判断を仰ぐ
                 4. リトライ中に `APPROVED` 等の別の状態に変わった場合は、手順3に戻りCIの完了を待機する（手順8の回数制限の対象）。
             - それ以外の場合: 手順3に戻りCIの完了を待機する（手順8の回数制限の対象）。
         - `DRAFT`: ドラフトPRである旨をユーザーに報告し、続行するか判断を仰ぐ。
