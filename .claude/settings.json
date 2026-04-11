@@ -22,10 +22,9 @@
       "Bash(mv *)",
       "Bash(printf *)",
       "Bash(tail *)",
-      "Skill(create-pr)",
-      "Skill(fix-pr)",
       "Skill(retro)",
-      "Skill(solve-issue)"
+      "Skill(solve-issue)",
+      "Skill(vox-actor-plugin:monologue)"
     ],
     "deny": [
       "Bash(git add --all)",
@@ -59,13 +58,23 @@
     ]
   },
   "enabledPlugins": {
-    "base-tools@canpok1-plugins": true
+    "base-tools@canpok1-plugins": true,
+    "vox-actor-plugin@vox-actor-marketplace": true,
+    "skill-creator@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "canpok1-plugins": {
       "source": {
         "source": "directory",
         "path": "./"
+      },
+      "autoUpdate": true
+    },
+    "vox-actor-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "canpok1/vox-actor"
       },
       "autoUpdate": true
     }

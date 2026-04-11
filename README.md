@@ -16,7 +16,7 @@ Claude Code の機能を拡張するプラグインのマーケットプレイ�
 
 | プラグイン名 | 説明 |
 |-------------|------|
-| [github](plugins/github/) | GitHub 連携プラグイン（開発中） |
+| [base-tools](plugins/base-tools/) | 基本ツールプラグイン |
 
 ## ライセンス
 

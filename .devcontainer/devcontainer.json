@@ -15,7 +15,8 @@
 		"source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
 	],
 	"remoteEnv": {
-		"WORKSPACE_DIR": "${containerWorkspaceFolder}"
+		"WORKSPACE_DIR": "${containerWorkspaceFolder}",
+		"VOX_ACTOR_WORKSPACE": "${containerWorkspaceFolder}/.tmp/notify"
 	},
 	"postCreateCommand": ".devcontainer/post-create.sh",
 	"waitFor": "postCreateCommand"
