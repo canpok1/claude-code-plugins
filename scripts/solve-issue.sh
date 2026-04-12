@@ -59,5 +59,5 @@ git pull origin main
 if [[ "$PRINT_MODE" == "true" ]]; then
   "${SCRIPT_DIR}/claude-stream.sh" --worktree "issue-${ISSUE_NUMBER}" --dangerously-skip-permissions -p "/base-tools:solve-issue ${ISSUE_NUMBER}"
 else
-  claude --worktree "issue-${ISSUE_NUMBER}" --dangerously-skip-permissions -p "/base-tools:solve-issue ${ISSUE_NUMBER}"
+  claude --worktree "issue-${ISSUE_NUMBER}" --dangerously-skip-permissions "/base-tools:solve-issue ${ISSUE_NUMBER}"
 fi

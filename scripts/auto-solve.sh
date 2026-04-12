@@ -3,14 +3,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-PRINT_MODE_FLAG=""
-
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    -p) PRINT_MODE_FLAG="-p"; shift ;;
-    *) echo "Usage: $0 [-p]" >&2; exit 1 ;;
-  esac
-done
+if [[ $# -gt 0 ]]; then
+  echo "Usage: $0" >&2; exit 1
+fi
 
 REPO="$(gh repo view --json nameWithOwner -q '.nameWithOwner')"
 
@@ -33,7 +28,7 @@ while $RUNNING; do
     ISSUE_TITLE=$(echo "$ISSUE" | jq -r '.title')
     echo ""
     echo "#${ISSUE_NUMBER} ${ISSUE_TITLE}"
-    "${SCRIPT_DIR}/solve-issue.sh" $PRINT_MODE_FLAG "$ISSUE_NUMBER" || true
+    "${SCRIPT_DIR}/solve-issue.sh" -p "$ISSUE_NUMBER" || true
   else
     printf "."
   fi
