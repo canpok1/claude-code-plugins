@@ -37,7 +37,7 @@ Atomic スキルでは、必要最小限のツールだけを `allowed-tools` �
 |--------|--------------|
 | tdd | `Bash, Read, Grep, Glob, Write, Edit` |
 | self-review | `Bash(git diff *), Bash(git log *), Read, Grep, Glob` |
-| work-memo | `Bash(${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/...), Read, Write, Edit` |
+| work-memo | `Bash(${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/get-memo-path.sh), Bash(${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/move-memo.sh *), Read, Write, Edit` |
 
 ## 3. description の目的文マッチング
 
