@@ -43,7 +43,7 @@ echo "Found ${ISSUE_COUNT} issue(s) ready for assignment"
 cd "$WORKSPACE_DIR"
 
 if [[ "$PRINT_MODE" == "true" ]]; then
-  "${SCRIPT_DIR}/claude-stream.sh" -p "/assign-issues --count ${ASSIGN_COUNT}"
+  "${SCRIPT_DIR}/claude-stream.sh" -p "/base-tools:assign-issues --count ${ASSIGN_COUNT}"
 else
-  claude -p "/assign-issues --count ${ASSIGN_COUNT}"
+  claude -p "/base-tools:assign-issues --count ${ASSIGN_COUNT}"
 fi

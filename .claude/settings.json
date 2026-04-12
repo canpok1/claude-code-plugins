@@ -24,7 +24,7 @@
       "Bash(tail *)",
       "Skill(retro)",
       "Skill(solve-issue)",
-      "Skill(assign-issues)",
+      "Skill(base-tools:assign-issues)",
       "Skill(vox-actor-plugin:monologue)",
       "Bash(gh issue edit *)",
       "Bash(gh label create *)"
