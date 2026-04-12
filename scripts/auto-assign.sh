@@ -50,6 +50,7 @@ trap 'RUNNING=false; echo ""; echo "Shutting down..."; exit 0' SIGINT SIGTERM
 
 echo "Watching queue in ${REPO} (min-queue: ${MIN_QUEUE})..."
 
+cd "$WORKSPACE_DIR"
 PREV_STATE=""
 
 while $RUNNING; do
@@ -94,7 +95,6 @@ while $RUNNING; do
       echo ""
       echo "Queue: ${QUEUE_COUNT} (< ${MIN_QUEUE}), assigning..."
 
-      cd "$WORKSPACE_DIR"
       if [[ "$PRINT_MODE" == "true" ]]; then
         "${SCRIPT_DIR}/claude-stream.sh" -p "/base-tools:assign-issues --count ${ASSIGN_COUNT}" || true
       else
