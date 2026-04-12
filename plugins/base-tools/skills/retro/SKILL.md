@@ -1,7 +1,7 @@
 ---
 name: retro
 description: 作業メモとこれまでの文脈をもとに作業全体の振り返りを行う時に使うスキル。振り返り結果をメモに追記し、完了後にアーカイブする。
-allowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/get-memo-path.sh), Bash(${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/move-memo.sh *), Read, Write, Edit
+allowed-tools: Read, Edit
 ---
 
 ## 手順
@@ -10,20 +10,17 @@ allowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/get-memo-path
 - [ ] ステップ2: これまでの文脈を整理する
 - [ ] ステップ3: 振り返り観点で整理する
 - [ ] ステップ4: 振り返り結果を作業メモに追記する
-- [ ] ステップ5: メモを done/ へアーカイブ移動する
+- [ ] ステップ5: メモをアーカイブ移動する
 
 ## 注意点
 
 - 全体
+    - 各ステップで該当する目的のスキルが利用可能であれば積極的に活用すること。
     - 振り返りは事実ベースで記述すること。責任論や個人への批判にしないこと。
     - 作業メモが存在しない場合は、会話の文脈だけから振り返りを行うこと。
 - ステップ1
-    - 以下のコマンドで現在のブランチに対応する作業メモファイルのパスを取得すること。
-      ```bash
-      ${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/get-memo-path.sh
-      ```
-    - ファイルが存在する場合は `Read` で内容を読み取ること。
-    - ファイルが存在しない場合はステップ2へ進むこと（文脈のみで振り返る）。
+    - 現在のブランチに対応する作業メモを取得・参照すること。
+    - メモが存在しない場合はステップ2へ進むこと（文脈のみで振り返る）。
 - ステップ2
     - 作業メモと会話の文脈から、以下の観点で情報を整理すること:
         - 実装内容: 何を実装・変更したか
@@ -52,9 +49,6 @@ allowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/get-memo-path
       ```
     - 作業メモが存在しない場合は、振り返り結果をユーザーに報告するのみとすること。
 - ステップ5
-    - 作業メモファイルが存在する場合、以下のコマンドで `done/` へアーカイブ移動すること。
-      ```bash
-      ${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/move-memo.sh <メモファイルの絶対パス> done
-      ```
+    - 作業メモファイルが存在する場合、メモをアーカイブ移動すること。
     - 移動先のパスを確認し、アーカイブが完了したことを報告すること。
     - 作業メモが存在しない場合はこのステップをスキップすること。
