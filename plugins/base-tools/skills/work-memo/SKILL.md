@@ -16,16 +16,15 @@ ${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/get-memo-path.sh
 標準出力に絶対パスを出力する。メモディレクトリは自動作成される。
 ファイルが存在しない場合は、過去のメモがないものとして扱う。
 
-## メモファイルの移動（done/・issued/ へのアーカイブ）
+## メモファイルのアーカイブ
 
-完了・処理済みとなったメモをアーカイブ先へ衝突回避付きで移動する:
+作業が完了したメモを `done/` へアーカイブ移動する:
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/move-memo.sh <src-abs-path> <dest-subdir>
+${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/move-memo.sh <src-abs-path> done
 ```
 
 - `<src-abs-path>`: 移動元のメモファイル絶対パス
-- `<dest-subdir>`: `done` または `issued`（`retro` スキルは `done`、`memo-to-issue` スキルは `issued` を指定する）
 - 同名ファイルが既に存在する場合はタイムスタンプ付き（`<basename>.YYYYMMDDHHMMSS.md`）に自動リネームされる
 - 標準出力に移動先の絶対パスが1行出力される
 
