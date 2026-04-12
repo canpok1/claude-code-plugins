@@ -4,16 +4,18 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-PRINT_MODE_FLAG=""
+PRINT_MODE=false
+ASSIGN_COUNT=1
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -p) PRINT_MODE_FLAG="-p"; shift ;;
+    -p) PRINT_MODE=true; shift ;;
+    -c) ASSIGN_COUNT="$2"; shift 2 ;;
     *)
       if [[ -z "${MIN_QUEUE:-}" ]] && [[ "$1" =~ ^[0-9]+$ ]]; then
         MIN_QUEUE="$1"; shift
       else
-        echo "Usage: $0 [-p] <min-queue>" >&2; exit 1
+        echo "Usage: $0 [-p] [-c count] <min-queue>" >&2; exit 1
       fi
       ;;
   esac
@@ -21,7 +23,12 @@ done
 
 if [[ -z "${MIN_QUEUE:-}" ]]; then
   echo "Error: min-queue is required" >&2
-  echo "Usage: $0 [-p] <min-queue>" >&2
+  echo "Usage: $0 [-p] [-c count] <min-queue>" >&2
+  exit 1
+fi
+
+if ! [[ "$ASSIGN_COUNT" =~ ^[0-9]+$ ]]; then
+  echo "Error: count must be a number" >&2
   exit 1
 fi
 
@@ -43,6 +50,9 @@ trap 'RUNNING=false; echo ""; echo "Shutting down..."; exit 0' SIGINT SIGTERM
 
 echo "Watching queue in ${REPO} (min-queue: ${MIN_QUEUE})..."
 
+cd "$WORKSPACE_DIR"
+PREV_STATE=""
+
 while $RUNNING; do
   # assign-to-claudeラベル付きのopen Issue数をカウント
   QUEUE_COUNT=$(gh issue list \
@@ -52,13 +62,47 @@ while $RUNNING; do
     --json number \
     --jq 'length')
 
-  if [[ "$QUEUE_COUNT" -lt "$MIN_QUEUE" ]]; then
-    echo ""
-    echo "Queue: ${QUEUE_COUNT} (< ${MIN_QUEUE}), assigning new issues..."
-    "${SCRIPT_DIR}/assign-issues.sh" $PRINT_MODE_FLAG -c 1 || true
+  if [[ "$QUEUE_COUNT" -ge "$MIN_QUEUE" ]]; then
+    CURRENT_STATE="queue_sufficient"
+    if [[ "$PREV_STATE" != "$CURRENT_STATE" ]]; then
+      echo ""
+      echo "Queue: ${QUEUE_COUNT} (>= ${MIN_QUEUE}), waiting..."
+    else
+      printf "."
+    fi
   else
-    printf "."
+    # readyラベル付き + assign-to-claude/in-progress-by-claude 未付与のIssueをカウント
+    ISSUE_COUNT=$(gh issue list \
+      --repo "$REPO" \
+      --state open \
+      --label "ready" \
+      --json labels,number \
+      --jq '[.[] | select(
+        (.labels | map(.name) | index("assign-to-claude") | not) and
+        (.labels | map(.name) | index("in-progress-by-claude") | not)
+      )] | length')
+
+    if [[ "$ISSUE_COUNT" -eq 0 ]]; then
+      CURRENT_STATE="no_issues"
+      if [[ "$PREV_STATE" != "$CURRENT_STATE" ]]; then
+        echo ""
+        echo "No issues to assign, waiting..."
+      else
+        printf "."
+      fi
+    else
+      CURRENT_STATE="assigning"
+      echo ""
+      echo "Queue: ${QUEUE_COUNT} (< ${MIN_QUEUE}), assigning..."
+
+      if [[ "$PRINT_MODE" == "true" ]]; then
+        "${SCRIPT_DIR}/claude-stream.sh" -p "/base-tools:assign-issues --count ${ASSIGN_COUNT}" || true
+      else
+        claude -p "/base-tools:assign-issues --count ${ASSIGN_COUNT}" || true
+      fi
+    fi
   fi
 
+  PREV_STATE="$CURRENT_STATE"
   sleep 60
 done
