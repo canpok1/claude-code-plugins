@@ -44,13 +44,15 @@ GitHub Issue の対応を一貫して自動化する基本ツールプラグイ�
 
 | スキル名 | 説明 | 実行例 |
 |----------|------|--------|
-| `read-issue` | GitHub Issue の内容を確認し、実装要件を整理する | `/base-tools:read-issue 42` |
-| `tdd` | テスト駆動開発（TDD）で Red→Green→Refactor のサイクルを回す | `/base-tools:tdd ログイン機能の実装` |
+| `read-issue` | GitHub Issue の内容（タイトル、本文、ラベル、コメント）を確認し、実装要件を整理する | `/base-tools:read-issue 42` |
+| `tdd` | コードを実装する。テスト駆動開発（TDD）で Red→Green→Refactor のサイクルをベビーステップで回す | `/base-tools:tdd ログイン機能の実装` |
 | `self-review` | 自分が書いたコードの変更内容をレビューし、指摘点を洗い出す | `/base-tools:self-review` |
-| `create-pr` | プルリクエストを作成する | `/base-tools:create-pr` |
-| `fix-pr` | 作成済み PR の CI 確認・レビュー対応・マージを行う | `/base-tools:fix-pr` |
-| `work-memo` | 作業メモの記録・参照を行う | `/base-tools:work-memo` |
-| `retro` | 作業の振り返りを行う | `/base-tools:retro` |
+| `create-pr` | プルリクエストを作成する（ブランチの push、差分確認、PRタイトル・本文の作成まで） | `/base-tools:create-pr` |
+| `fix-pr` | 作成済みのプルリクエストに対して CI 確認・レビュー対応・マージを行う | `/base-tools:fix-pr` |
+| `work-memo` | 作業メモファイルの記録・参照・移動を行う | `/base-tools:work-memo` |
+| `retro` | 作業メモとこれまでの文脈をもとに作業全体の振り返りを行う | `/base-tools:retro` |
+| `analyze-work-memo` | アーカイブ済みの作業メモを横断的に分析し、改善点を抽出して GitHub Issue として登録する | `/base-tools:analyze-work-memo` |
+| `assign-issues` | open 状態の Issue を優先度順に評価し、指定件数に assign-to-claude ラベルを付与する | `/base-tools:assign-issues` |
 
 #### フック
 
