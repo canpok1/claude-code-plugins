@@ -24,7 +24,10 @@
       "Bash(tail *)",
       "Skill(retro)",
       "Skill(solve-issue)",
-      "Skill(vox-actor-plugin:monologue)"
+      "Skill(base-tools:assign-issues)",
+      "Skill(vox-actor-plugin:monologue)",
+      "Bash(gh issue edit *)",
+      "Bash(gh label create *)"
     ],
     "deny": [
       "Bash(git add --all)",
