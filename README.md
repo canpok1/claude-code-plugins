@@ -77,6 +77,40 @@ GitHub Issue の対応を一貫して自動化する基本ツールプラグイ�
 
 利用者はプロジェクト側で同じ目的のスキルを定義することで、Atomic スキルを上書きできます。例えば、プロジェクト固有のテスト手法がある場合、プロジェクトの `.claude/skills/` に独自の `tdd` スキルを配置すれば、`solve-issue` ワークフロー内で自動的にそちらが使用されます。
 
+## ワークフロースクリプト
+
+Issue の自動解決や自動アサインなど、ワークフロー自動実行用のシェルスクリプトを提供しています。
+プラグインユーザーは自分のプロジェクトにこれらのスクリプトをコピーして利用できます。
+
+### 前提条件
+
+- `curl` — セットアップスクリプトのダウンロードに必要
+- [GitHub CLI (`gh`)](https://cli.github.com/) — ワークフロースクリプトの実行に必要（インストール・認証済みであること）
+
+### セットアップ
+
+プロジェクトのルートディレクトリで以下を実行してください:
+
+```bash
+curl -sL https://raw.githubusercontent.com/canpok1/claude-code-plugins/refs/heads/main/setup-workflow.sh | bash
+```
+
+`workflow-scripts/` ディレクトリが作成され、スクリプトがダウンロードされます。
+既存のファイルがある場合はスキップされます。強制的に上書きする場合は `-f` フラグを指定してください:
+
+```bash
+curl -sL https://raw.githubusercontent.com/canpok1/claude-code-plugins/refs/heads/main/setup-workflow.sh | bash -s -- -f
+```
+
+### スクリプト一覧
+
+| スクリプト | 説明 |
+|-----------|------|
+| `auto-solve.sh` | `assign-to-claude` ラベル付きの Issue を監視し、自動で解決を実行する |
+| `auto-assign.sh` | open Issue を優先度評価し、`assign-to-claude` ラベルを付与する |
+| `solve-issue.sh` | 指定した Issue 番号の解決を実行する |
+| `claude-stream.sh` | Claude の出力をストリーミング表示する |
+
 ## アップデート・アンインストール
 
 プラグインのアップデート:
