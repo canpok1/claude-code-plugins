@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: テスト駆動開発(TDD)で実装する時に使うスキル。テストリスト作成 → Red → Green → Refactor のサイクルをベビーステップで繰り返す。
+description: コードを実装する時に使うスキル。テスト駆動開発(TDD)で Red→Green→Refactor のサイクルをベビーステップで回す。
 allowed-tools: Bash, Read, Grep, Glob, Write, Edit
 argument-hint: "[task-description]"
 ---
@@ -15,6 +15,7 @@ argument-hint: "[task-description]"
 ## 注意点
 - 全体
     - PR作成・git push を行わないこと。責務はテストとプロダクションコードの実装・コミットまでに限定すること。
+    - 節目ごとに作業メモを残すこと。テストリスト作成後、各サイクル完了時など、作業の区切りで記録する。
 - ステップ1
     - 実装前に、必要なテストケースをTODOコメントとして列挙すること。**この段階ではコードを書かないこと。**
     - シンプルなケースから複雑なケースの順に並べること。
