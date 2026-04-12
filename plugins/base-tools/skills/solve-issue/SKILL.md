@@ -1,6 +1,6 @@
 ---
 name: solve-issue
-description: GitHub Issueの対応を行うスキル。実装が必要な場合はコミット・品質改善・自己レビュー・PR作成・マージまでを一貫して行う。
+description: GitHub Issueの対応を行うスキル。実装が必要な場合は実装・品質改善・自己レビュー・PR作成・マージまでを一貫して行う。
 argument-hint: "[issue-number]"
 disable-model-invocation: true
 ---
