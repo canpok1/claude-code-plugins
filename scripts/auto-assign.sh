@@ -4,18 +4,16 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-PRINT_MODE=false
 ASSIGN_COUNT=1
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -p) PRINT_MODE=true; shift ;;
     -c) ASSIGN_COUNT="$2"; shift 2 ;;
     *)
       if [[ -z "${MIN_QUEUE:-}" ]] && [[ "$1" =~ ^[0-9]+$ ]]; then
         MIN_QUEUE="$1"; shift
       else
-        echo "Usage: $0 [-p] [-c count] <min-queue>" >&2; exit 1
+        echo "Usage: $0 [-c count] <min-queue>" >&2; exit 1
       fi
       ;;
   esac
@@ -23,7 +21,7 @@ done
 
 if [[ -z "${MIN_QUEUE:-}" ]]; then
   echo "Error: min-queue is required" >&2
-  echo "Usage: $0 [-p] [-c count] <min-queue>" >&2
+  echo "Usage: $0 [-c count] <min-queue>" >&2
   exit 1
 fi
 
@@ -95,11 +93,7 @@ while $RUNNING; do
       echo ""
       echo "Queue: ${QUEUE_COUNT} (< ${MIN_QUEUE}), assigning..."
 
-      if [[ "$PRINT_MODE" == "true" ]]; then
-        "${SCRIPT_DIR}/claude-stream.sh" -p "/base-tools:assign-issues --count ${ASSIGN_COUNT}" || true
-      else
-        claude -p "/base-tools:assign-issues --count ${ASSIGN_COUNT}" || true
-      fi
+      "${SCRIPT_DIR}/claude-stream.sh" -p "/base-tools:assign-issues --count ${ASSIGN_COUNT}" || true
     fi
   fi
 
