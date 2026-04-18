@@ -45,7 +45,6 @@ GitHub Issue の対応を一貫して自動化する基本ツールプラグイ�
 | スキル名 | 説明 | 実行例 |
 |----------|------|--------|
 | `read-issue` | GitHub Issue の内容（タイトル、本文、ラベル、コメント）を確認し、実装要件を整理する | `/base-tools:read-issue 42` |
-| `tdd` | コードを実装する。テスト駆動開発（TDD）で Red→Green→Refactor のサイクルをベビーステップで回す | `/base-tools:tdd ログイン機能の実装` |
 | `self-review` | 自分が書いたコードの変更内容をレビューし、指摘点を洗い出す | `/base-tools:self-review` |
 | `create-pr` | プルリクエストを作成する（ブランチの push、差分確認、PRタイトル・本文の作成まで） | `/base-tools:create-pr` |
 | `fix-pr` | 作成済みのプルリクエストに対して CI 確認・レビュー対応・マージを行う | `/base-tools:fix-pr` |
