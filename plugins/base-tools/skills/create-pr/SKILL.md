@@ -15,10 +15,11 @@ allowed-tools: Bash(gh pr create *), Bash(gh pr view *), Bash(git push *), Bash(
 
 - 全体
     - 節目ごとに作業メモを残すこと。PR作成の判断やタイトル・本文の決定理由を記録し、後続の作業で参照できるようにする。
+    - コマンドの実行結果が空・想定外だった場合は、次のアクションへ進む前に状態確認コマンドを挟むこと。
 - ステップ1
     - `git status` で未コミットの変更がないか確認すること。
     - `git branch` で現在のブランチ名を確認すること。
-    - リモートブランチの追跡状態を確認し、未pushの場合は `git push -u origin {branch}` でpushすること。
+    - リモートブランチの追跡状態を確認し、未pushの場合は `git push -u origin {branch}` でpushすること。push後は `git status` で `Your branch is up to date with 'origin/{branch}'` を確認し、追跡状態が期待通りになっているか確かめること。
 - ステップ2
     - `git log` でベースブランチから分岐後のコミット履歴を確認すること。
     - `git diff {base-branch}...HEAD` でベースブランチとの差分を確認すること。
@@ -33,5 +34,5 @@ allowed-tools: Bash(gh pr create *), Bash(gh pr view *), Bash(git push *), Bash(
     - 関連するIssueがある場合は `Closes #XX` をPR本文に含めること。
     - `gh pr create` でPRを作成すること。
 - ステップ4
-    - `gh pr view` で作成されたPRの内容（タイトル、本文、ベースブランチ、差分）を確認すること。
+    - `gh pr view` で作成されたPRの内容（タイトル、本文、ベースブランチ、差分）を確認すること。出力が空だった場合は `gh pr view --json number,title,body,baseRefName` のように `--json` オプションで再取得すること。
     - 想定通りに作成できたか確認し、問題があればユーザーに報告すること。
