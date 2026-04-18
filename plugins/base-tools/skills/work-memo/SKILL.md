@@ -69,6 +69,7 @@ ${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/move-memo.sh <src-abs-path> analy
 
 ### ステップ1: {ステップ名} (YYYY-MM-DD HH:MM)
 - {内容}
+- 使用スキル: {スキル名1}, {スキル名2}(xN)
 ```
 
 ## 書き込みルール
@@ -77,3 +78,7 @@ ${CLAUDE_PLUGIN_ROOT}/skills/work-memo/scripts/move-memo.sh <src-abs-path> analy
 - 最初に書き込む時は目的・作業内容チェックリストを設定する
 - 各ステップ完了時に作業ログセクションへ追記する
 - 作業内容チェックリストは完了時にチェックを付ける
+- 各ステップのログには「使用スキル」行を必ず含め、そのステップで呼び出したスキル名を記録する
+    - プラグイン名のプレフィックス（`base-tools:` 等）は省略し、スキル名のみ記載する
+    - 同一スキルを複数回呼び出した場合は `スキル名(xN)` 形式で回数を付記する（例: `monologue(x3)`）
+    - スキルを呼び出していないステップでは `使用スキル: なし` と記載する
