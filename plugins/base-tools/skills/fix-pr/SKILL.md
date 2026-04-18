@@ -1,7 +1,7 @@
 ---
 name: fix-pr
 description: 作成済みのプルリクエストに対してCI確認・レビュー対応・マージを行う時に使うスキル。
-allowed-tools: Bash(gh pr checks *), Bash(gh pr view *), Bash(gh pr merge *), Bash(gh pr comment *), Bash(gh api *), Bash(git diff *), Bash(git log *), Bash(git status *), Bash(git add *), Bash(git commit *), Bash(git push *), Read, Edit, Grep, Glob
+allowed-tools: Bash(gh pr checks *), Bash(gh pr view *), Bash(gh pr merge *), Bash(gh pr comment *), Bash(gh api *), Bash(git diff *), Bash(git log *), Bash(git status *), Bash(git add *), Bash(git commit *), Bash(git push *), Bash(git ls-remote *), Read, Edit, Grep, Glob
 ---
 
 ## 手順
