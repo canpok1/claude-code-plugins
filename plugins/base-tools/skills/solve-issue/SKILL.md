@@ -27,3 +27,4 @@ disable-model-invocation: true
     - 要件が不明確な場合はユーザーに確認すること。
 - ステップ2
     - コードを変更した場合は論理的な変更ごとにコミットすること。
+    - スキル（`plugins/*/skills/*/SKILL.md`）を新規追加/削除した場合、または既存スキルの `description` を変更した場合は、READMEのスキル一覧にも同じ内容を同一PR内で反映すること。
