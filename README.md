@@ -107,6 +107,7 @@ curl -sL https://raw.githubusercontent.com/canpok1/claude-code-plugins/refs/head
 |-----------|------|
 | `auto-solve.sh` | `assign-to-claude` ラベル付きの Issue を監視し、自動で解決を実行する |
 | `auto-assign.sh` | open Issue を優先度評価し、`assign-to-claude` ラベルを付与する |
+| `auto-analyze.sh` | 完了した作業メモが一定数たまったら自動で分析を実行する |
 | `solve-issue.sh` | 指定した Issue 番号の解決を実行する |
 | `claude-stream.sh` | Claude の出力をストリーミング表示する |
 
