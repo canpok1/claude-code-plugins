@@ -8,6 +8,7 @@ DIR="workflow-scripts"
 FILES=(
   "auto-solve.sh"
   "auto-assign.sh"
+  "auto-analyze.sh"
   "solve-issue.sh"
   "claude-stream.sh"
 )
